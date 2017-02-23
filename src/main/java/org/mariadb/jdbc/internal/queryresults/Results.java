@@ -50,6 +50,7 @@ OF SUCH DAMAGE.
 
 import org.mariadb.jdbc.MariaDbStatement;
 import org.mariadb.jdbc.internal.protocol.Protocol;
+import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSet;
 import org.mariadb.jdbc.internal.util.ExceptionMapper;
 
 import java.sql.ResultSet;
@@ -119,7 +120,8 @@ public class Results {
      *                              <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      * @param autoincrement         Connection auto-increment value
      */
-    public Results(MariaDbStatement statement, int fetchSize, boolean batch, int expectedSize, boolean binaryFormat, int resultSetScrollType, int autoincrement) {
+    public Results(MariaDbStatement statement, int fetchSize, boolean batch, int expectedSize, boolean binaryFormat,
+                   int resultSetScrollType, int autoincrement) {
         this.statement = statement;
         this.fetchSize = fetchSize;
         this.batch = batch;

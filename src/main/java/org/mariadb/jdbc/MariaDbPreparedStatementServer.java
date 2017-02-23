@@ -52,16 +52,16 @@ import org.mariadb.jdbc.internal.logging.Logger;
 import org.mariadb.jdbc.internal.logging.LoggerFactory;
 import org.mariadb.jdbc.internal.packet.dao.parameters.ParameterHolder;
 import org.mariadb.jdbc.internal.queryresults.*;
-import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSetCommon;
+import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSet;
 import org.mariadb.jdbc.internal.util.ExceptionMapper;
 import org.mariadb.jdbc.internal.util.dao.ServerPrepareResult;
 
 import java.sql.*;
 import java.util.*;
 
-public abstract class BasePreparedStatementServer extends BasePrepareStatement implements Cloneable {
+public class MariaDbPreparedStatementServer extends CommonPrepareStatement implements Cloneable {
 
-    private static Logger logger = LoggerFactory.getLogger(BasePreparedStatementServer.class);
+    private static Logger logger = LoggerFactory.getLogger(MariaDbPreparedStatementServer.class);
 
     String sql;
     ServerPrepareResult serverPrepareResult = null;
@@ -83,7 +83,7 @@ public abstract class BasePreparedStatementServer extends BasePrepareStatement i
      * @param forcePrepare        force immediate prepare
      * @throws SQLException exception
      */
-    public BasePreparedStatementServer(MariaDbConnection connection, String sql, int resultSetScrollType, boolean forcePrepare)
+    public MariaDbPreparedStatementServer(MariaDbConnection connection, String sql, int resultSetScrollType, boolean forcePrepare)
             throws SQLException {
         super(connection, resultSetScrollType);
         this.sql = sql;
@@ -99,8 +99,8 @@ public abstract class BasePreparedStatementServer extends BasePrepareStatement i
      * @return Clone statement.
      * @throws CloneNotSupportedException if any error occur.
      */
-    public BasePreparedStatementServer clone() throws CloneNotSupportedException {
-        BasePreparedStatementServer clone = (BasePreparedStatementServer) super.clone();
+    public MariaDbPreparedStatementServer clone() throws CloneNotSupportedException {
+        MariaDbPreparedStatementServer clone = (MariaDbPreparedStatementServer) super.clone();
         clone.metadata = metadata;
         clone.parameterMetaData = parameterMetaData;
         clone.queryParameters = new ArrayList<>();
@@ -286,7 +286,7 @@ public abstract class BasePreparedStatementServer extends BasePrepareStatement i
         if (execute()) {
             return results.getResultSet();
         }
-        return SelectResultSetCommon.createEmptyResultSet();
+        return SelectResultSet.createEmptyResultSet();
     }
 
     @Override

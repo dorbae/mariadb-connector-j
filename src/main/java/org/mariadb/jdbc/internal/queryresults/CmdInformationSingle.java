@@ -50,7 +50,7 @@ OF SUCH DAMAGE.
 */
 
 import org.mariadb.jdbc.internal.protocol.Protocol;
-import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSetCommon;
+import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSet;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -60,6 +60,13 @@ public class CmdInformationSingle implements CmdInformation {
     private long updateCount;
     private int autoIncrement;
 
+    /**
+     * Single Query result.
+     *
+     * @param insertId      insert id.
+     * @param updateCount   update count
+     * @param autoIncrement connection autoincrement
+     */
     public CmdInformationSingle(long insertId, long updateCount, int autoIncrement) {
         this.insertId = insertId;
         this.updateCount = updateCount;
@@ -104,18 +111,18 @@ public class CmdInformationSingle implements CmdInformation {
      */
     public ResultSet getGeneratedKeys(Protocol protocol) {
         if (insertId == 0) {
-            return SelectResultSetCommon.createEmptyResultSet();
+            return SelectResultSet.createEmptyResultSet();
         } else {
             if (updateCount == 1) {
-                return SelectResultSetCommon.createGeneratedData(new long[]{insertId}, protocol, true);
+                return SelectResultSet.createGeneratedData(new long[]{insertId}, protocol, true);
             } else if (updateCount == Statement.EXECUTE_FAILED) {
-                return SelectResultSetCommon.createEmptyResultSet();
+                return SelectResultSet.createEmptyResultSet();
             } else {
                 long[] ret = new long[(int) updateCount];
                 for (int i = 0; i < updateCount; i++) {
                     ret[i] = insertId + i * autoIncrement;
                 }
-                return SelectResultSetCommon.createGeneratedData(ret, protocol, true);
+                return SelectResultSet.createGeneratedData(ret, protocol, true);
             }
         }
     }

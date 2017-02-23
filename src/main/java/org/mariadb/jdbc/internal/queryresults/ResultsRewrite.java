@@ -66,7 +66,8 @@ public class ResultsRewrite extends Results {
      *                              <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      * @param autoincrement         connection autoincrement value
      */
-    public ResultsRewrite(MariaDbStatement statement, int fetchSize, boolean batch, int expectedSize, boolean binaryFormat, int resultSetScrollType, int autoincrement) {
+    public ResultsRewrite(MariaDbStatement statement, int fetchSize, boolean batch, int expectedSize, boolean binaryFormat,
+                          int resultSetScrollType, int autoincrement) {
         super(statement, fetchSize, batch, expectedSize, binaryFormat, resultSetScrollType, autoincrement);
         setCmdInformation(new CmdInformationRewrite(expectedSize, autoincrement));
     }

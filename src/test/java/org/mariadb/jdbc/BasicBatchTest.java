@@ -3,7 +3,6 @@ package org.mariadb.jdbc;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSetCommon;
 
 import java.sql.*;
 
@@ -223,8 +222,6 @@ public class BasicBatchTest extends BaseTest {
 
         int[] updateCount = stmt.executeBatch();
 
-        ResultSet resultSet = stmt.getGeneratedKeys();
-
         assertEquals(6, updateCount.length);
         assertEquals(1, updateCount[0]);
         assertEquals(1, updateCount[1]);
@@ -245,6 +242,8 @@ public class BasicBatchTest extends BaseTest {
         assertTrue(stmt.getMoreResults());
         assertEquals(1, stmt.getUpdateCount());
         assertFalse(stmt.getMoreResults());
+
+        ResultSet resultSet = stmt.getGeneratedKeys();
 
         assertTrue(resultSet.next());
         assertEquals(1, resultSet.getInt(1));

@@ -52,7 +52,7 @@ OF SUCH DAMAGE.
 package org.mariadb.jdbc;
 
 import org.mariadb.jdbc.internal.ColumnType;
-import org.mariadb.jdbc.internal.queryresults.SelectResultSet;
+import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSet;
 import org.mariadb.jdbc.internal.util.ExceptionMapper;
 
 import java.io.InputStream;
@@ -64,7 +64,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BaseCallableProcedureStatement extends BasePreparedStatementServer implements CallableStatement, Cloneable {
+public abstract class CallableProcedureStatement extends MariaDbPreparedStatementServer implements CallableStatement, Cloneable {
 
     /**
      * Information about parameters, merely from registerOutputParameter() and setXXX() calls.
@@ -83,7 +83,7 @@ public abstract class BaseCallableProcedureStatement extends BasePreparedStateme
      *                            <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      * @throws SQLException is prepareStatement connection throw any error
      */
-    public BaseCallableProcedureStatement(MariaDbConnection connection, String sql, int resultSetScrollType)
+    public CallableProcedureStatement(MariaDbConnection connection, String sql, int resultSetScrollType)
             throws SQLException {
         super(connection, sql, resultSetScrollType, true);
     }
@@ -94,8 +94,8 @@ public abstract class BaseCallableProcedureStatement extends BasePreparedStateme
      * @return Cloned .
      * @throws CloneNotSupportedException if any error occur.
      */
-    public BaseCallableProcedureStatement clone() throws CloneNotSupportedException {
-        BaseCallableProcedureStatement clone = (BaseCallableProcedureStatement) super.clone();
+    public CallableProcedureStatement clone() throws CloneNotSupportedException {
+        CallableProcedureStatement clone = (CallableProcedureStatement) super.clone();
         clone.params = params;
         clone.parameterMetadata = parameterMetadata;
         return clone;

@@ -50,7 +50,7 @@ OF SUCH DAMAGE.
 */
 
 import org.mariadb.jdbc.internal.protocol.Protocol;
-import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSetCommon;
+import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSet;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -68,8 +68,6 @@ public class CmdInformationRewrite implements CmdInformation {
     /**
      * Rewrite information objects.
      * Driver cannot know each update count for each batch, since they are combined for faster results.
-     * getUpdateCount will always return Statement.SUCCESS_NO_INFO
-     * (or Statement.EXECUTE_FAILED if there was an exception)
      * storing updateCounts permit to send getGeneratedId().
      *
      * @param expectedSize expected batch size.
@@ -141,7 +139,7 @@ public class CmdInformationRewrite implements CmdInformation {
                 }
             }
         }
-        return SelectResultSetCommon.createGeneratedData(ret, protocol, true);
+        return SelectResultSet.createGeneratedData(ret, protocol, true);
     }
 
     public int getCurrentStatNumber() {

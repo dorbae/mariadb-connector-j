@@ -53,7 +53,7 @@ import org.mariadb.jdbc.internal.logging.Logger;
 import org.mariadb.jdbc.internal.logging.LoggerFactory;
 import org.mariadb.jdbc.internal.protocol.Protocol;
 import org.mariadb.jdbc.internal.queryresults.*;
-import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSetCommon;
+import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSet;
 import org.mariadb.jdbc.internal.util.ExceptionMapper;
 import org.mariadb.jdbc.internal.util.Options;
 import org.mariadb.jdbc.internal.util.Utils;
@@ -73,7 +73,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public abstract class BaseStatement implements Statement, Cloneable {
+public class MariaDbStatement implements Statement, Cloneable {
 
     //timeout scheduler
     private static final ScheduledExecutorService timeoutScheduler = SchedulerServiceProviderHolder.getTimeoutScheduler();
@@ -113,13 +113,14 @@ public abstract class BaseStatement implements Statement, Cloneable {
      * @param resultSetScrollType one of the following <code>ResultSet</code> constants: <code>ResultSet.TYPE_FORWARD_ONLY</code>,
      *                            <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      */
-    public BaseStatement(MariaDbConnection connection, int resultSetScrollType) {
+    public MariaDbStatement(MariaDbConnection connection, int resultSetScrollType) {
         this.protocol = connection.getProtocol();
         this.connection = connection;
         this.canUseServerTimeout = connection.canUseServerTimeout();
         this.resultSetScrollType = resultSetScrollType;
         this.lock = this.connection.lock;
         this.options = this.protocol.getOptions();
+        this.results = new Results(this, connection.getAutoIncrementIncrement());
     }
 
     /**
@@ -445,7 +446,7 @@ public abstract class BaseStatement implements Statement, Cloneable {
             return results.getResultSet();
         }
         //throw new SQLException("executeQuery() with query '" + query +"' did not return a result set");
-        return SelectResultSetCommon.createEmptyResultSet();
+        return SelectResultSet.createEmptyResultSet();
     }
 
 
@@ -781,7 +782,7 @@ public abstract class BaseStatement implements Statement, Cloneable {
         if (results.getCmdInformation() != null) {
             return results.getCmdInformation().getGeneratedKeys(protocol);
         }
-        return SelectResultSetCommon.createEmptyResultSet();
+        return SelectResultSet.createEmptyResultSet();
     }
 
     /**

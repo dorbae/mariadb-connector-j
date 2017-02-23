@@ -51,7 +51,7 @@ OF SUCH DAMAGE.
 */
 
 import org.mariadb.jdbc.internal.protocol.Protocol;
-import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSetCommon;
+import org.mariadb.jdbc.internal.queryresults.resultset.SelectResultSet;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -188,14 +188,14 @@ public class CmdInformationMultiple implements CmdInformation {
     public ResultSet getGeneratedKeys(Protocol protocol) {
         switch (updateCounts.size()) {
             case 0:
-                return SelectResultSetCommon.createEmptyResultSet();
+                return SelectResultSet.createEmptyResultSet();
 
             case 1:
                 long[] ret = new long[updateCounts.peek().intValue()];
                 for (int i = 0; i < updateCounts.peek(); i++) {
                     ret[i] = insertIds.peek() + i * autoincrement;
                 }
-                return SelectResultSetCommon.createGeneratedData(ret, protocol, true);
+                return SelectResultSet.createGeneratedData(ret, protocol, true);
 
             default:
 
@@ -216,10 +216,10 @@ public class CmdInformationMultiple implements CmdInformation {
                 }
 
                 long[] result = new long[generatedIds.size()];
-                int i = 0;
-                for (Long l : generatedIds) result[i++] = l;
+                int counter = 0;
+                for (Long l : generatedIds) result[counter++] = l;
 
-                return SelectResultSetCommon.createGeneratedData(result, protocol, true);
+                return SelectResultSet.createGeneratedData(result, protocol, true);
 
         }
     }

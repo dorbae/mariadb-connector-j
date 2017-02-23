@@ -62,7 +62,6 @@ import org.mariadb.jdbc.internal.packet.result.*;
 import org.mariadb.jdbc.internal.protocol.Protocol;
 import org.mariadb.jdbc.internal.queryresults.ColumnNameMap;
 import org.mariadb.jdbc.internal.queryresults.Results;
-import org.mariadb.jdbc.internal.queryresults.SelectResultSet;
 import org.mariadb.jdbc.internal.stream.MariaDbInputStream;
 import org.mariadb.jdbc.internal.util.ExceptionCode;
 import org.mariadb.jdbc.internal.util.ExceptionMapper;
@@ -88,9 +87,10 @@ import java.util.regex.Pattern;
 import static org.mariadb.jdbc.internal.util.SqlStates.CONNECTION_EXCEPTION;
 
 @SuppressWarnings("deprecation")
-public abstract class SelectResultSetCommon implements ResultSet {
+public class SelectResultSet implements ResultSet {
 
     private static final ColumnInformation[] INSERT_ID_COLUMNS;
+
     static {
         INSERT_ID_COLUMNS = new ColumnInformation[1];
         INSERT_ID_COLUMNS[0] = ColumnInformation.create("insert_id", ColumnType.BIGINT);
@@ -101,7 +101,7 @@ public abstract class SelectResultSetCommon implements ResultSet {
     private static final String zeroTimestamp = "0000-00-00 00:00:00";
     private static final String zeroDate = "0000-00-00";
     private static final Pattern isIntegerRegex = Pattern.compile("^-?\\d+\\.0+$");
-    private static Logger logger = LoggerFactory.getLogger(SelectResultSetCommon.class);
+    private static Logger logger = LoggerFactory.getLogger(SelectResultSet.class);
     private boolean callableResult;
     private Protocol protocol;
     private ReadPacketFetcher packetFetcher;
@@ -139,8 +139,8 @@ public abstract class SelectResultSetCommon implements ResultSet {
      * @throws IOException if any connection error occur
      * @throws SQLException if any connection error occur
      */
-    public SelectResultSetCommon(ColumnInformation[] columnInformation, Results results, Protocol protocol,
-                                 ReadPacketFetcher fetcher, boolean callableResult)
+    public SelectResultSet(ColumnInformation[] columnInformation, Results results, Protocol protocol,
+                           ReadPacketFetcher fetcher, boolean callableResult)
             throws IOException, SQLException {
 
         this.statement = results.getStatement();
@@ -193,8 +193,8 @@ public abstract class SelectResultSetCommon implements ResultSet {
      * @param resultSetScrollType one of the following <code>ResultSet</code> constants: <code>ResultSet.TYPE_FORWARD_ONLY</code>,
      *                            <code>ResultSet.TYPE_SCROLL_INSENSITIVE</code>, or <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
      */
-    public SelectResultSetCommon(ColumnInformation[] columnInformation, List<byte[][]> resultSet, Protocol protocol,
-                                 int resultSetScrollType) {
+    public SelectResultSet(ColumnInformation[] columnInformation, List<byte[][]> resultSet, Protocol protocol,
+                           int resultSetScrollType) {
         this.statement = null;
         this.isClosed = false;
         if (protocol != null) {
@@ -308,7 +308,7 @@ public abstract class SelectResultSetCommon implements ResultSet {
         return new SelectResultSet(columns, rows, protocol, TYPE_SCROLL_SENSITIVE);
     }
 
-    public static SelectResultSetCommon createEmptyResultSet() {
+    public static SelectResultSet createEmptyResultSet() {
         return new SelectResultSet(INSERT_ID_COLUMNS, new ArrayList<byte[][]>(), null,
                 TYPE_SCROLL_SENSITIVE);
     }
@@ -1901,7 +1901,7 @@ public abstract class SelectResultSetCommon implements ResultSet {
                 if (type.equals(byte[].class)) {
                     return (T) rawBytes;
                 }
-                return getAdditionalObject(rawBytes, col, type);
+                throw ExceptionMapper.getFeatureNotSupportedException("Type '" + type.getName() + "' is not supported");
 
         }
 
@@ -2007,8 +2007,6 @@ public abstract class SelectResultSetCommon implements ResultSet {
         }
         throw ExceptionMapper.getFeatureNotSupportedException("Type '" + columnInfo.getColumnType().getTypeName() + "' is not supported");
     }
-
-    protected abstract <T> T getAdditionalObject(byte[] rawBytes, ColumnInformation col, Class<T> type) throws SQLException ;
 
     /**
      * {inheritDoc}.

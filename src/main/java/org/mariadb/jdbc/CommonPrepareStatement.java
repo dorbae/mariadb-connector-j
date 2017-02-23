@@ -783,15 +783,13 @@ public abstract class CommonPrepareStatement extends MariaDbStatement implements
         } else if (obj instanceof Clob) {
             setClob(parameterIndex, (Clob) obj);
         } else {
-            if (!setAdditionalObject(parameterIndex, obj)) {
-                //fallback to sending serialized object
-                try {
-                    setParameter(parameterIndex, new SerializableParameter(obj, connection.noBackslashEscapes));
-                    hasLongData = true;
-                } catch (IOException e) {
-                    throw ExceptionMapper.getSqlException(
-                            "Could not set parameter in setObject, Object class is not handled (Class : " + obj.getClass() + ")");
-                }
+            //fallback to sending serialized object
+            try {
+                setParameter(parameterIndex, new SerializableParameter(obj, connection.noBackslashEscapes));
+                hasLongData = true;
+            } catch (IOException e) {
+                throw ExceptionMapper.getSqlException(
+                        "Could not set parameter in setObject, Object class is not handled (Class : " + obj.getClass() + ")");
             }
         }
     }
@@ -868,7 +866,7 @@ public abstract class CommonPrepareStatement extends MariaDbStatement implements
                         setTime(parameterIndex, Time.valueOf((String) obj));
                         break;
                     default:
-                        setStringObject(parameterIndex, str, targetSqlType);
+                        throw ExceptionMapper.getSqlException("Could not convert [" + str + "] to " + targetSqlType);
                 }
             } catch (IllegalArgumentException e) {
                 throw ExceptionMapper.getSqlException("Could not convert [" + str + "] to " + targetSqlType, e);
@@ -953,16 +951,10 @@ public abstract class CommonPrepareStatement extends MariaDbStatement implements
         } else if (obj instanceof Reader) {
             setCharacterStream(parameterIndex, (Reader) obj, scaleOrLength);
         } else {
-            if (!setAdditionalObject(parameterIndex, obj)) {
-                throw ExceptionMapper.getSqlException("Could not set parameter in setObject, could not convert: " + obj.getClass() + " to "
-                        + targetSqlType);
-            }
+            throw ExceptionMapper.getSqlException("Could not set parameter in setObject, could not convert: " + obj.getClass() + " to "
+                    + targetSqlType);
         }
     }
-
-    public abstract void setStringObject(final int parameterIndex, final String str, final int targetSqlType) throws SQLException;
-
-    public abstract boolean setAdditionalObject(final int parameterIndex, final Object obj) throws SQLException;
 
     /**
      * Sets the designated parameter to the given input stream, which will have the specified number of bytes. When a
