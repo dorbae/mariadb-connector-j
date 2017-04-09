@@ -432,7 +432,14 @@ public enum DefaultOptions {
      * When closing a statement that is fetching result-set (using setFetchSize),
      * kill query to avoid having to read remaining rows.
      */
-    KILL_FETCH_STMT("killFetchStmtOnClose", Boolean.TRUE, "2.0.0");
+    KILL_FETCH_STMT("killFetchStmtOnClose", Boolean.TRUE, "2.0.0"),
+
+    /**
+     * Server RSA public key path.
+     * Needed for sha256_password authentication.
+     * (alias serverRSAPublicKeyFile)
+     */
+    SERVER_RSA_PUBLIC_KEY_FILE("serverRsaPublicKeyFile", "2.0.0");
 
 
     protected final String name;
@@ -585,6 +592,8 @@ public enum DefaultOptions {
                         case "keyStore":
                             propertyValue = properties.getProperty("clientCertificateKeyStoreUrl");
                             break;
+                        case "serverRsaPublicKeyFile":
+                            propertyValue = properties.getProperty("serverRSAPublicKeyFile");
                         default:
                             //no alias
                     }

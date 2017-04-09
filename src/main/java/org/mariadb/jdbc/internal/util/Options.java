@@ -110,6 +110,7 @@ public class Options {
     public int useBatchMultiSendNumber;
     public boolean usePipelineAuth;
     public boolean killFetchStmtOnClose;
+    public String serverRsaPublicKeyFile;
 
     //logging options
     public boolean log;
@@ -161,6 +162,7 @@ public class Options {
                 + ", yearIsDateType=" + yearIsDateType
                 + ", createDatabaseIfNotExist=" + createDatabaseIfNotExist
                 + ", serverTimezone='" + serverTimezone + '\''
+                + ", serverRsaPublicKeyFile='" + serverRsaPublicKeyFile + '\''
                 + ", nullCatalogMeansCurrent=" + nullCatalogMeansCurrent
                 + ", dumpQueriesOnException=" + dumpQueriesOnException
                 + ", useOldAliasMetadataBehavior=" + useOldAliasMetadataBehavior
@@ -276,6 +278,11 @@ public class Options {
         if (serverTimezone != null ? !serverTimezone.equals(options.serverTimezone) : options.serverTimezone != null) {
             return false;
         }
+        if ((serverRsaPublicKeyFile != null && !serverRsaPublicKeyFile.equals(options.serverRsaPublicKeyFile))
+                || (serverRsaPublicKeyFile == null && options.serverRsaPublicKeyFile != null)) {
+            return false;
+        }
+
         if (prepStmtCacheSize != null ? !prepStmtCacheSize.equals(options.prepStmtCacheSize) : options.prepStmtCacheSize != null) {
             return false;
         }

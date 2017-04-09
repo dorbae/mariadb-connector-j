@@ -128,6 +128,7 @@ public class SendHandshakeResponsePacket {
         pos.startPacket(packetSeq);
 
         final byte[] authData;
+        //TODO implement SHA256 in case of default-authentication-plugin=sha256_password
         switch (plugin) {
             case "": //CONJ-274 : permit connection mysql 5.1 db
             case DefaultAuthenticationProvider.MYSQL_NATIVE_PASSWORD:

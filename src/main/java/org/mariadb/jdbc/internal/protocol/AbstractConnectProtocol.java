@@ -753,7 +753,7 @@ public abstract class AbstractConnectProtocol implements Protocol {
                 //see AuthenticationProviderHolder for implement other plugin
                 interfaceSendPacket = AuthenticationProviderHolder.getAuthenticationProvider()
                         .processAuthPlugin(reader, plugin, password, authData, reader.getLastPacketSeq() + 1,
-                                options.passwordCharacterEncoding);
+                                options.passwordCharacterEncoding, options);
             } else {
                 interfaceSendPacket = new SendOldPasswordAuthPacket(this.password, Utils.copyWithLength(seed, 8),
                         reader.getLastPacketSeq() + 1, options.passwordCharacterEncoding);
