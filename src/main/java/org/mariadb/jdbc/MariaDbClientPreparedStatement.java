@@ -409,10 +409,10 @@ public class MariaDbClientPreparedStatement extends AbstractPrepareStatement imp
             parameters[parameterIndex - 1] = holder;
         } else {
             logger.error("Could not set parameter at position " + parameterIndex
-                    + " (values vas " + holder.toString() + ")");
+                    + " (values was " + holder.toString() + ")");
 
             throw ExceptionMapper.getSqlException("Could not set parameter at position " + parameterIndex
-                    + " (values vas " + holder.toString() + ")");
+                    + " (values was " + holder.toString() + ")");
         }
     }
 
